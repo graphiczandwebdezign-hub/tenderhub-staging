@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}{{ title }} — TenderHub SA{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="container">
+    <nav class="breadcrumbs small muted">
+      <a href="{{ url_for('homepage') }}">Home</a> /
+      <a href="{{ url_for('province_page', province_slug=province.facet_key) }}">{{ province.facet_label }}</a> /
+      <a href="{{ url_for('category_page', category_slug=category.facet_key) }}">{{ category.facet_label }}</a>
+    </nav>
+    <h1>{{ title }}</h1>
+    <p class="muted intro">{{ intro }}</p>
+    <div class="list">
+      {% for tender in items %}
+      <article class="card list-row">
+        <div>
+          <h3><a href="{{ url_for('tender_detail', slug=tender.slug) }}">{{ tender.title }}</a></h3>
+          <div class="muted">{{ tender.organ_of_state or 'Unknown organ of state' }}</div>
+          <div class="badges">
+            <span class="badge">{{ tender.category or 'Uncategorized' }}</span>
+            <span class="badge">{{ tender.province or 'Unknown Province' }}</span>
+            {% if tender.esubmission %}<span class="badge">eSubmission</span>{% endif %}
+          </div>
+        </div>
+        <div class="meta-right small">
+          <div><strong>Published:</strong> {{ tender.published_at|dt }}</div>
+          <div><strong>Closes:</strong> {{ tender.closing_at|dt }}</div>
+        </div>
+      </article>
+      {% else %}
+      <p>No active tenders found for this combination yet.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

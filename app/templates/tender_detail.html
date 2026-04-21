@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block title %}{{ tender.title }} — TenderHub SA{% endblock %}
+{% block content %}
+<section class="section">
+  <div class="container detail-layout">
+    <article class="card detail-card">
+      <nav class="breadcrumbs small muted">
+        <a href="{{ url_for('homepage') }}">Home</a> / <a href="{{ url_for('tenders') }}">Tenders</a>
+        {% if tender.province_slug %} / <a href="{{ url_for('province_page', province_slug=tender.province_slug) }}">{{ tender.province }}</a>{% endif %}
+        {% if tender.category_slug %} / <a href="{{ url_for('category_page', category_slug=tender.category_slug) }}">{{ tender.category }}</a>{% endif %}
+      </nav>
+
+      <div class="badges">
+        {% if tender.category %}<span class="badge">{{ tender.category }}</span>{% endif %}
+        {% if tender.province %}<span class="badge">{{ tender.province }}</span>{% endif %}
+        {% if tender.esubmission %}<span class="badge">eSubmission</span>{% endif %}
+        <span class="badge">{{ tender.status|capitalize }}</span>
+      </div>
+
+      <h1>{{ tender.title }}</h1>
+      <p class="muted issuer">{{ tender.organ_of_state or tender.buyer_name or 'Unknown organ of state' }}</p>
+
+      <div class="key-dates">
+        <div><strong>Published:</strong> {{ tender.published_at|dt }}</div>
+        <div><strong>Closing:</strong> {{ tender.closing_at|dt }}</div>
+        <div><strong>Briefing:</strong> {{ tender.briefing_at|dt }}</div>
+        <div><strong>Reference:</strong> {{ tender.reference_number or tender.tender_number or '—' }}</div>
+      </div>
+
+      {% if tender.notice_url %}
+      <p><a class="button" href="{{ tender.notice_url }}" rel="nofollow noopener" target="_blank">View Original Notice</a></p>
+      {% endif %}
+
+      <section>
+        <h2>Description</h2>
+        <p>{{ tender.description or 'No description provided.' }}</p>
+      </section>
+
+      {% if documents %}
+      <section>
+        <h2>Documents</h2>
+        <ul class="facet-list">
+          {% for doc in documents %}
+          <li><a href="{{ doc.url }}" rel="nofollow noopener" target="_blank">{{ doc.title or doc.url }}</a></li>
+          {% endfor %}
+        </ul>
+      </section>
+      {% endif %}
+    </article>
+
+    <aside class="card sidebar-card">
+      <h2>Related Tenders</h2>
+      <ul class="facet-list">
+        {% for item in related_tenders %}
+        <li><a href="{{ url_for('tender_detail', slug=item.slug) }}">{{ item.title }}</a></li>
+        {% else %}
+        <li class="muted">No related tenders found yet.</li>
+        {% endfor %}
+      </ul>
+    </aside>
+  </div>
+</section>
+{% endblock %}

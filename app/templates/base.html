@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}TenderHub SA{% endblock %}</title>
+  <meta name="description" content="Browse active South African tenders by province, category, and closing date.">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="{{ url_for('homepage') }}" class="logo">TenderHub SA</a>
+      <nav>
+        <a href="{{ url_for('tenders') }}">All Tenders</a>
+        <a href="{{ url_for('closing_soon_page') }}">Closing Soon</a>
+      </nav>
+    </div>
+  </header>
+  {% block content %}{% endblock %}
+  <footer class="site-footer">
+    <div class="container">
+      <p>Always verify final tender details on the original source before applying.</p>
+    </div>
+  </footer>
+</body>
+</html>

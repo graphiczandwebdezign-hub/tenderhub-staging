@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% block title %}TenderHub SA — South African Tenders & Opportunities{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="container">
+    <h1>South African Tenders & Opportunities</h1>
+    <p>Browse active public sector tender opportunities by province, category, and closing date.</p>
+    <form action="{{ url_for('tenders') }}" method="get" class="search-form">
+      <input type="text" name="q" placeholder="Search tender title, number, or organ of state">
+      <button type="submit">Search</button>
+    </form>
+  </div>
+</section>
+
+<section class="stats">
+  <div class="container stats-grid">
+    <div class="card stat-card"><strong>{{ stats.active_tenders_count or 0 }}</strong><span>Active tenders</span></div>
+    <div class="card stat-card"><strong>{{ stats.provinces_count or 0 }}</strong><span>Provinces covered</span></div>
+    <div class="card stat-card"><strong>{{ stats.categories_count or 0 }}</strong><span>Categories</span></div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section-head"><h2>Closing Soon</h2><a href="{{ url_for('closing_soon_page') }}">View all</a></div>
+    <div class="grid cards-grid">
+      {% for tender in closing_soon %}
+      <article class="card tender-card">
+        <div class="muted small">{{ tender.category or 'Uncategorized' }} · {{ tender.province or 'South Africa' }}</div>
+        <h3><a href="{{ url_for('tender_detail', slug=tender.slug) }}">{{ tender.title }}</a></h3>
+        <p>{{ tender.summary or 'No summary available yet.' }}</p>
+        <div class="muted small">{{ tender.organ_of_state or 'Unknown organ of state' }}</div>
+        <div class="small"><strong>Closes:</strong> {{ tender.closing_at|dt }}</div>
+      </article>
+      {% else %}
+      <p>No tenders yet. Run the ingestor first.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="section-head"><h2>Latest Active Tenders</h2><a href="{{ url_for('tenders') }}">View all</a></div>
+    <div class="list">
+      {% for tender in latest_tenders %}
+      <article class="card list-row">
+        <div>
+          <h3><a href="{{ url_for('tender_detail', slug=tender.slug) }}">{{ tender.title }}</a></h3>
+          <div class="muted">{{ tender.organ_of_state or 'Unknown organ of state' }}</div>
+          <div class="badges">
+            <span class="badge">{{ tender.category or 'Uncategorized' }}</span>
+            <span class="badge">{{ tender.province or 'South Africa' }}</span>
+            {% if tender.esubmission %}<span class="badge">eSubmission</span>{% endif %}
+          </div>
+        </div>
+        <div class="meta-right small">
+          <div><strong>Published:</strong> {{ tender.published_at|dt }}</div>
+          <div><strong>Closes:</strong> {{ tender.closing_at|dt }}</div>
+        </div>
+      </article>
+      {% else %}
+      <p>No tenders yet. Run the ingestor first.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container two-col">
+    <div>
+      <h2>Browse by Province</h2>
+      <ul class="facet-list">
+        {% for province in top_provinces %}
+        <li><a href="{{ url_for('province_page', province_slug=province.facet_key) }}">{{ province.facet_label }}</a> <span class="muted">({{ province.item_count }})</span></li>
+        {% else %}
+        <li class="muted">No province facets yet.</li>
+        {% endfor %}
+      </ul>
+    </div>
+    <div>
+      <h2>Browse by Category</h2>
+      <ul class="facet-list">
+        {% for category in top_categories %}
+        <li><a href="{{ url_for('category_page', category_slug=category.facet_key) }}">{{ category.facet_label }}</a> <span class="muted">({{ category.item_count }})</span></li>
+        {% else %}
+        <li class="muted">No category facets yet.</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</section>
+{% endblock %}
